@@ -1,0 +1,35 @@
+project_name/
+├── app/
+│   ├── __init__.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── endpoints/
+│   │      ├── __init__.py
+│   │      ├── some_endpoint.py
+│   │      └── ...
+│   │
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   ├── security.py
+│   │   └── ...
+│   ├── db/
+│   │   ├── __init__.py
+│   │   ├── base.py
+│   │   └── session.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── some_service.py
+│   │   └── ...
+│   └── utils/
+│       ├── __init__.py
+│       ├── helpers.py
+│       └── ...
+├── tests/
+│   ├── __init__.py
+│   ├── test_some_endpoint.py
+│   └── ...
+├── .env
+├── main.py
+├── requirements.txt
+└── README.md
