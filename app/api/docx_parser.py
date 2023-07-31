@@ -6,10 +6,11 @@ from app.schemas.parse import FileParseResult, RegexField, RegexFieldStatistical
 from app.utils.app_exceptions import UnicornException
 from app.api.content_regex import get_regex_val
 from collections import OrderedDict
-from io import BytesIO
 from docx import Document
+from io import BytesIO
 
-def parse_local_doc_file(file_path):
+
+def parse_local_docx_file(file_path):
     """
     解析本地的 .doc .docx文件内容
     """
@@ -30,7 +31,7 @@ def parse_local_doc_file(file_path):
                                e.__str__())
 
 
-def parse_remote_doc_file(file_url):
+def parse_remote_docx_file(file_url):
     try:
         # 获取文件内容和编码方式
         encoding = 'utf-8'
@@ -55,7 +56,7 @@ def parse_remote_doc_file(file_url):
                                e.__str__())
 
 
-def get_doc_images(doc):
+def get_docx_images(doc):
     images = []
     for rel in doc.part.rels:
         if "image" in doc.part.rels[rel].target_ref:
@@ -64,7 +65,7 @@ def get_doc_images(doc):
 
 
 def get_return_result(doc, file_size, file_name, last_modified, encoding):
-    images = get_doc_images(doc)
+    images = get_docx_images(doc)
     title = doc.core_properties.title
     last_modified_time = doc.core_properties.modified
     if not last_modified_time:

@@ -86,11 +86,23 @@ def get_return_result(root, file_size, file_name, last_modified, encoding):
     data = {root.tag: data}
     file_content_struct = json.dumps(data)
     regex_all, regex_all_statistical = get_regex_val(file_content)
+    title = root.find(".//title")
+    if not title:
+        title = ""
+    lastmod = root.find(".//lastmod")
+    if not lastmod:
+        lastmod = ""
+    charset = root.get("encoding")
+    if not charset:
+        charset = ""
+    language = root.get('{http://www.w3.org/XML/1998/namespace}lang')
+    if not language:
+        language = ""
     extra_field = ExtraField(
-        date="",
-        language="",
-        charset="",
-        subject="",
+        date=lastmod,
+        language=language,
+        charset=charset,
+        subject=title,
         images=[],
         link=[],
         content_struct=file_content_struct

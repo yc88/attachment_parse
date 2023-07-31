@@ -1,17 +1,19 @@
+import csv
+import json
 import os
 import datetime
 import requests
+
 from app.schemas.const import MyErrorCode, HttpStatusCode
 from app.schemas.parse import FileParseResult, RegexField, RegexFieldStatistical, ExtraField
 from app.utils.app_exceptions import UnicornException
 from app.api.content_regex import get_regex_val
-from collections import OrderedDict
-from io import BytesIO
-from docx import Document
+import chardet
 
-def parse_local_doc_file(file_path):
+
+def parse_local_csv_file(file_path):
     """
-    解析本地的 .doc .docx文件内容
+    解析本地的 .xls .xlsx文件内容
     """
     try:
         # 获取文件内容和编码方式
@@ -22,15 +24,20 @@ def parse_local_doc_file(file_path):
         file_size = os.path.getsize(file_path)
         # 获取最后修改时间
         last_modified = datetime.datetime.fromtimestamp(os.path.getmtime(file_path)).strftime('%Y-%m-%d %H:%M:%S')
-        doc = Document(file_path)
-        return get_return_result(doc, file_size, file_name, last_modified, encoding)
+
+        with open(file_path, 'r', encoding=encoding) as file:
+            csv_reader = csv.reader(file)
+            titles = next(csv_reader)  # 获取标题行
+            contents = list(csv_reader)
+
+        return get_return_result(contents, titles, "", file_size, file_name, last_modified, encoding)
     except Exception as e:
         raise UnicornException(HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR,
                                MyErrorCode.InvalidArgument.value,
                                e.__str__())
 
 
-def parse_remote_doc_file(file_url):
+def parse_remote_csv_file(file_url):
     try:
         # 获取文件内容和编码方式
         encoding = 'utf-8'
@@ -43,8 +50,27 @@ def parse_remote_doc_file(file_url):
             raw_content = response.text
             # 获取文件大小
             file_size = len(raw_content)
-            doc = Document(BytesIO(response.content))
-            return get_return_result(doc, file_size, file_name, last_modified="", encoding=encoding)
+            # 获取最后修改时间
+            last_modified = response.headers.get("Last-Modified")
+            if not last_modified:
+                last_modified = ""
+            if last_modified is not str:
+                last_modified = str(last_modified)
+            # 获取编码格式
+            file_encoding = chardet.detect(response.content)['encoding']
+
+            # 使用 StringIO 创建一个类文件对象
+            from io import StringIO
+            csv_file = StringIO(response.text)
+            # 解析 CSV 文件
+            reader = csv.reader(csv_file)
+            data = [row for row in reader]
+            # 获取标题行
+            titles = data[0]
+            # 获取内容行
+            content = data[1:]
+            return get_return_result(content, titles, file_encoding, file_size, file_name, last_modified,
+                                     encoding)
         else:
             raise UnicornException(HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR,
                                    MyErrorCode.InvalidArgument.value,
@@ -55,49 +81,25 @@ def parse_remote_doc_file(file_url):
                                e.__str__())
 
 
-def get_doc_images(doc):
-    images = []
-    for rel in doc.part.rels:
-        if "image" in doc.part.rels[rel].target_ref:
-            images.append(doc.part.rels[rel].target_ref)
-    return list(OrderedDict.fromkeys(val for val in images if val))
+def get_return_result(contents, titles, file_encoding, file_size, file_name, last_modified, encoding):
+    # 获取标题
+    title = '\n'.join(titles)
+    # 获取 body 内容
+    file_content = '\n'.join([vv for c in contents for vv in c if vv])
+    result = [{header: [value[i] for value in contents]} for i, header in enumerate(titles)]
 
-
-def get_return_result(doc, file_size, file_name, last_modified, encoding):
-    images = get_doc_images(doc)
-    title = doc.core_properties.title
-    last_modified_time = doc.core_properties.modified
-    if not last_modified_time:
-        last_modified_time = ""
-    if last_modified_time is not str:
-        last_modified_time = str(last_modified_time)
-    language = doc.core_properties.language
-    if language is not str:
-        language = str(language)
-    # Extract content
-    # 获取文件内容（包括表格、图片等）
-    content = []
-    for paragraph in doc.paragraphs:
-        if paragraph.text:
-            content.append(paragraph.text)
-    # Extract tables from the document
-    for table in doc.tables:
-        for row in table.rows:
-            for cell in row.cells:
-                content.append(cell.text)
-
-    file_content = '\n'.join(content)
     regex_all, regex_all_statistical = get_regex_val(file_content)
-
+    if not file_encoding:
+        file_encoding = ""
     extra_field = ExtraField(
-        date=last_modified_time,
-        language=language,
-        charset="",
+        date="",
+        language="",
+        charset=file_encoding,
         subject=title,
-        images=images,
+        images=[],
         link=[],
+        content_struct=str(result)
     )
-
     return FileParseResult(file_size=file_size, file_name=file_name, last_modified=last_modified,
                            file_content=file_content, file_encoding=encoding,
                            regex_all=regex_all, regex_all_statistical=regex_all_statistical, extra=extra_field)

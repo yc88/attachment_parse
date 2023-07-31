@@ -6,6 +6,10 @@ from app.api.txt_parser import parse_local_text_file, parse_remote_text_file
 from app.api.eml_parser import parse_local_eml_file, parse_remote_eml_file
 from app.api.html_parser import parse_local_html_file, parse_remote_html_file
 from app.api.xml_parser import parse_local_xml_file, parse_remote_xml_file
+from app.api.xls_parser import parse_local_xls_file, parse_remote_xls_file
+from app.api.docx_parser import parse_local_docx_file, parse_remote_docx_file
+from app.api.csv_parser import parse_local_csv_file, parse_remote_csv_file
+from app.api.pdf_parser import parse_local_pdf_file, parse_remote_pdf_file
 
 
 class FileParser:
@@ -49,18 +53,36 @@ class FileParser:
                         return parse_local_text_file(self.path)
                     else:
                         return parse_remote_text_file(self.path)
-                case '.doc' | '.docx':
-                    return None
+                case '.docx':
+                    # none
+                    if self.is_local:
+                        return parse_local_docx_file(self.path)
+                    else:
+                        return parse_remote_docx_file(self.path)
+                case '.doc':
+                    # none
+                    raise UnicornException(HttpStatusCode.HTTP_500_INTERNAL_SERVER_ERROR,
+                                           MyErrorCode.Unimplemented.value,
+                                           " the doc type not parse ")
                 case '.xls' | '.xlsx':
-                    return None
+                    if self.is_local:
+                        return parse_local_xls_file(self.path)
+                    else:
+                        return parse_remote_xls_file(self.path)
                 case '.csv':
-                    return None
+                    if self.is_local:
+                        return parse_local_csv_file(self.path)
+                    else:
+                        return parse_remote_csv_file(self.path)
                 case '.ppt' | '.pptx':
                     return None
                 case '.png' | '.jpg' | '.jpeg':
                     return None
                 case '.pdf':
-                    return ["pdf"]
+                    if self.is_local:
+                        return parse_local_pdf_file(self.path)
+                    else:
+                        return parse_remote_pdf_file(self.path)
                 case '.html' | '.htm':
                     if self.is_local:
                         return parse_local_html_file(self.path)
