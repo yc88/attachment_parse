@@ -1,7 +1,7 @@
 from enum import Enum, auto
 
 Allowed_Extensions = ['.txt', '.doc', '.docx', '.xls', '.xlsx', '.csv',
-                      '.ppt', '.pptx', '.png', '.jpg', '.jpeg', '.pdf', '.html', '.htm', '.eml', '.xml']
+                      '.ppt', '.pptx', '.png', '.jpg', '.jpeg','.gif', '.pdf', '.html', '.htm', '.eml', '.xml']
 
 
 class MyErrorCode(Enum):

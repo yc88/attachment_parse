@@ -10,13 +10,17 @@ from app.api.xls_parser import parse_local_xls_file, parse_remote_xls_file
 from app.api.docx_parser import parse_local_docx_file, parse_remote_docx_file
 from app.api.csv_parser import parse_local_csv_file, parse_remote_csv_file
 from app.api.pdf_parser import parse_local_pdf_file, parse_remote_pdf_file
+from app.api.ppt_parser import parse_local_ppt_file, parse_remote_ppt_file
+from app.api.img_parser import parse_local_image_file, parse_remote_image_file
+from app.core.config import Settings
 
 
 class FileParser:
 
-    def __init__(self, path_url: str, is_local: bool):
+    def __init__(self, path_url: str, is_local: bool, settings: Settings):
         self.path = path_url
         self.is_local = is_local
+        self.setting = settings
 
     async def read_file(self):
         if self.path == "":
@@ -75,9 +79,19 @@ class FileParser:
                     else:
                         return parse_remote_csv_file(self.path)
                 case '.ppt' | '.pptx':
-                    return None
-                case '.png' | '.jpg' | '.jpeg':
-                    return None
+                    if self.is_local:
+                        return parse_local_ppt_file(self.path, self.setting.tesseract_cmd_path,
+                                                    self.setting.tesseract_languages)
+                    else:
+                        return parse_remote_ppt_file(self.path, self.setting.tesseract_cmd_path,
+                                                     self.setting.tesseract_languages)
+                case '.png' | '.jpg' | '.jpeg' | '.gif':
+                    if self.is_local:
+                        return parse_local_image_file(self.path,
+                                                      self.setting.tesseract_cmd_path, self.setting.tesseract_languages)
+                    else:
+                        return parse_remote_image_file(self.path, self.setting.tesseract_cmd_path,
+                                                       self.setting.tesseract_languages)
                 case '.pdf':
                     if self.is_local:
                         return parse_local_pdf_file(self.path)
