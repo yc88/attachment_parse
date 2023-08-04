@@ -12,7 +12,7 @@ from app.utils.request_exceptions import (
 )
 from app.utils.app_exceptions import app_exception_handler
 
-from app.routers.api import api
+from app.routers.api import attachmentApi, baseApi
 
 app = FastAPI()
 
@@ -35,12 +35,13 @@ async def custom_app_exception_handler(request, e):
     return await app_exception_handler(request, e)
 
 
-app.include_router(api, prefix="")
+app.include_router(attachmentApi, prefix="")
+app.include_router(baseApi)
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": ""}
 
 
 #

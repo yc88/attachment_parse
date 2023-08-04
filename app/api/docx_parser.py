@@ -8,6 +8,7 @@ from app.api.content_regex import get_regex_val
 from collections import OrderedDict
 from docx import Document
 from io import BytesIO
+from langdetect import detect
 
 
 def parse_local_docx_file(file_path):
@@ -75,6 +76,7 @@ def get_return_result(doc, file_size, file_name, last_modified, encoding):
     language = doc.core_properties.language
     if language is not str:
         language = str(language)
+
     # Extract content
     # 获取文件内容（包括表格、图片等）
     content = []
@@ -89,7 +91,8 @@ def get_return_result(doc, file_size, file_name, last_modified, encoding):
 
     file_content = '\n'.join(content)
     regex_all, regex_all_statistical = get_regex_val(file_content)
-
+    if not language:
+        language = detect(file_content)
     extra_field = ExtraField(
         date=last_modified_time,
         language=language,
