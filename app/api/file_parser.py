@@ -12,7 +12,7 @@ from app.api.csv_parser import parse_local_csv_file, parse_remote_csv_file
 from app.api.pdf_parser import parse_local_pdf_file, parse_remote_pdf_file
 from app.api.ppt_parser import parse_local_ppt_file, parse_remote_ppt_file
 from app.api.img_parser import parse_local_image_file, parse_remote_image_file
-from app.core.config import Settings
+from app.core.config import Settings, GetFileJson
 
 
 class FileParser:

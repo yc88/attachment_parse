@@ -1,11 +1,18 @@
 import re
 from app.schemas.parse import RegexField, RegexFieldStatistical
+from app.core.config import Settings, GetFileJson
 from collections import OrderedDict, Counter
 
 
 class RegexRules:
-    def __init__(self, content: str):
+    def __init__(self, content: str, setting: Settings = None):
         self.content = content
+        if setting:
+            self.setting = setting
+        else:
+            self.setting = Settings()
+        get_json = GetFileJson(self.setting)
+        self.countries_map, self.countries_regex = get_json.get_countries()
 
     def get_all(self) -> RegexField:
         phone_numbers = self.get_phone_numbers()
@@ -41,16 +48,24 @@ class RegexRules:
         return re.findall(regex, self.content)
 
     def get_addresses(self) -> list:
-        regex = r'\b\d{1,5}\s\w+\s\w+\b'
-        return re.findall(regex, self.content)
+        regex = r"[0-9a-zA-Z ,.-]+, [0-9a-zA-Z ,.-]+, [0-9a-zA-Z ,.-]+, [0-9a-zA-Z]+"
+        return re.findall(regex, self.content, re.IGNORECASE)
 
     def get_company_names(self) -> list:
         regex = r'\b[A-Z][A-Za-z]+\s[A-Z][A-Za-z]+\b'
-        return re.findall(regex, self.content)
+        data = re.findall(regex, self.content)
+        return []
 
     def get_countries(self) -> list:
-        regex = r"\b[A-Z][a-z]+\b"
-        return re.findall(regex, self.content)
+        # regex = r"\b[A-Z][a-zA-Z]+\b"
+        result = []
+        if self.countries_regex:
+            regex = self.countries_regex
+            data = re.findall(regex, self.content, re.IGNORECASE)
+            for k in [match for sublist in data for match in sublist]:
+                if k:
+                    result.append(self.countries_map[k])
+        return result
 
     def get_land_line(self) -> list:
         regex = r"\b\d{3}-\d{3}-\d{4}\b"
