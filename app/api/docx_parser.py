@@ -10,7 +10,6 @@ from docx import Document
 from io import BytesIO
 from langdetect import detect
 
-
 def parse_local_docx_file(file_path):
     """
     解析本地的 .doc .docx文件内容

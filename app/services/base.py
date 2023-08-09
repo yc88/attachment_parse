@@ -1,6 +1,3 @@
-import pycountry
-
-from app.utils.app_exceptions import UnicornException, app_exception_handler
 from app.schemas.parse import ResponseModel
 from app.core.config import Settings
 import iso639

@@ -1,5 +1,7 @@
 # !/usr/bin/env python
 
+import sys
+import traceback
 from fastapi import Request
 from starlette.responses import JSONResponse
 from app.schemas.parse import ResponseModel
@@ -14,6 +16,7 @@ class UnicornException(Exception):
         self.code = code
         self.message = message
         self.data = data
+        super().__init__(status_code, code, message, data)
 
 
 async def app_exception_handler(request: Request, exc: UnicornException):
@@ -22,6 +25,10 @@ async def app_exception_handler(request: Request, exc: UnicornException):
         msg = GetErrMsg(exc.code)
     res = ResponseModel(success=False, data=exc.data, code=exc.code,
                         message=msg)
+    exc_info = sys.exc_info()  # Get exception information
+    exc_type, exc_value, exc_traceback = exc_info
+    error_message = "".join(traceback.format_tb(exc_traceback))
+    print(error_message)
     return JSONResponse(
         status_code=exc.status_code,
         content=res.get_dump(),
