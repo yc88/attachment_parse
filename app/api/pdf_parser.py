@@ -8,10 +8,8 @@ from app.schemas.parse import FileParseResult
 from app.utils.app_exceptions import UnicornException
 from app.api.content_regex import RegexRules, get_regex_val
 from app.schemas.parse import RegexField, RegexFieldStatistical, ExtraField
-import email
 from datetime import datetime, timezone, timedelta
 import PyPDF2
-from PIL import Image
 
 
 def parse_local_pdf_file(file_path):

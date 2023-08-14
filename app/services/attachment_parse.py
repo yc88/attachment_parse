@@ -12,5 +12,5 @@ class Service:
     async def parser(self, req: ParseRequest):
         fileParser = FileParser(req.path, req.is_local, self.settings)
         result = await fileParser.read_file()
-        res = ResponseModel(success=False, data=result, code=0, message="")
+        res = ResponseModel(success=True, data=result, code=0, message="")
         return res.get_dump()

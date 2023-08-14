@@ -21,7 +21,6 @@ class ParseRequest(BaseModel):
     """
     path: constr(min_length=1)
     is_local: bool
-    ext: str
 
 
 class RegexField(BaseModel):

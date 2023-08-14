@@ -1,7 +1,5 @@
 import os
 from io import BytesIO
-
-import pytesseract
 import requests
 
 from app.schemas.const import MyErrorCode, HttpStatusCode

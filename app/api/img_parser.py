@@ -7,7 +7,6 @@ from app.schemas.parse import FileParseResult
 from app.utils.app_exceptions import UnicornException
 from app.api.content_regex import RegexRules, get_regex_val
 from app.schemas.parse import RegexField, RegexFieldStatistical, ExtraField
-import email
 from datetime import datetime, timezone, timedelta
 from io import BytesIO
 from PIL import Image

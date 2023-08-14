@@ -1,4 +1,3 @@
-import json
 import os
 import datetime
 import requests
@@ -7,8 +6,6 @@ from app.schemas.const import MyErrorCode, HttpStatusCode
 from app.schemas.parse import FileParseResult, RegexField, RegexFieldStatistical, ExtraField
 from app.utils.app_exceptions import UnicornException
 from app.api.content_regex import get_regex_val
-from bs4 import BeautifulSoup
-from collections import OrderedDict
 import pandas
 import chardet
 from io import BytesIO

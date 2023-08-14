@@ -1,35 +1,17 @@
-project_name/
-├── app/
-│   ├── __init__.py
-│   ├── api/
-│   │   ├── __init__.py
-│   │   ├── endpoints/
-│   │      ├── __init__.py
-│   │      ├── some_endpoint.py
-│   │      └── ...
-│   │
-│   ├── core/
-│   │   ├── __init__.py
-│   │   ├── config.py
-│   │   ├── security.py
-│   │   └── ...
-│   ├── db/
-│   │   ├── __init__.py
-│   │   ├── base.py
-│   │   └── session.py
-│   ├── services/
-│   │   ├── __init__.py
-│   │   ├── some_service.py
-│   │   └── ...
-│   └── utils/
-│       ├── __init__.py
-│       ├── helpers.py
-│       └── ...
-├── tests/
-│   ├── __init__.py
-│   ├── test_some_endpoint.py
-│   └── ...
-├── .env
-├── main.py
-├── requirements.txt
-└── README.md
+beautifulsoup4==4.12.2
+chardet==5.1.0
+fastapi==0.101.0
+iso_639==0.4.5
+langdetect==1.0.9
+pandas==2.0.3
+Pillow==10.0.0
+pycountry==22.3.5
+pydantic==2.1.1
+pydantic_settings==2.0.2
+PyPDF2==3.0.1
+pytesseract==0.3.10
+python_docx==0.8.11
+python_pptx==0.6.21
+Requests==2.31.0
+starlette==0.27.0
+uvicorn==0.23.2
