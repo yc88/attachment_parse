@@ -5,7 +5,6 @@ from app.services.base import Base
 from functools import lru_cache
 from app.core.config import Settings
 from typing import Annotated
-import pytesseract
 
 attachmentApi = APIRouter(
     prefix="/attachment",
